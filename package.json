@@ -1,0 +1,27 @@
+{
+  "name": "controle-de-gastos",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxtjs/google-fonts": "^3.2.0",
+    "canvas-confetti": "^1.9.4",
+    "dotenv": "^17.2.3",
+    "h3-session": "^0.2.5",
+    "lucide-vue-next": "^0.554.0",
+    "nuxt": "^3.19.3",
+    "vue": "^3.5.22",
+    "vue-router": "^4.6.3"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.12.0",
+    "@types/node": "^24.9.1",
+    "typescript": "^5.5.0"
+  }
+}
