@@ -1,10 +1,11 @@
-
-const NOTION_CLIENT_ID = process.env.NOTION_CLIENT_ID!
-const NOTION_CLIENT_SECRET = process.env.NOTION_CLIENT_SECRET!
-const NOTION_REDIRECT_URI = process.env.NOTION_REDIRECT_URI!
-const N8N_WEBHOOK_URL = process.env.N8N_WEBHOOK_URL!
-
 export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig(event)
+  
+  const NOTION_CLIENT_ID = config.notionClientId
+  const NOTION_CLIENT_SECRET = config.notionClientSecret
+  const N8N_WEBHOOK_URL = config.n8nWebhookUrl
+  const baseUrl = config.public.baseUrl
+  const NOTION_REDIRECT_URI = `${baseUrl}/api/notion/callback`
 
   try {
     const query = getQuery(event)
@@ -71,7 +72,6 @@ export default defineEventHandler(async (event) => {
       connectionCode: connectionCode,
       success: true
     })
-
 
     return sendRedirect(event, '/')
 

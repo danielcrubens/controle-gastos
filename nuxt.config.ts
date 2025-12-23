@@ -19,5 +19,14 @@ export default defineNuxtConfig({
       'Inter': [300,400,500,700],
     }
   },
-   
+   runtimeConfig: {
+    notionClientId: process.env.NOTION_CLIENT_ID,
+    notionClientSecret: process.env.NOTION_CLIENT_SECRET,
+    n8nWebhookUrl: process.env.N8N_WEBHOOK_URL,
+    sessionSecret: process.env.SESSION_SECRET,
+    
+    public: {
+      baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+    }
+  },
 })
