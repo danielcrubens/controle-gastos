@@ -7,11 +7,21 @@ export default defineEventHandler(async (event) => {
   const baseUrl = config.public.baseUrl
   const NOTION_REDIRECT_URI = `${baseUrl}/api/notion/callback`
 
-  // LOG para debug
+  // VALIDAÇÃO DAS VARIÁVEIS
+  console.log('🔍 VALIDAÇÃO DE VARIÁVEIS:')
+  console.log('- CLIENT_ID existe?', !!NOTION_CLIENT_ID)
+  console.log('- CLIENT_ID length:', NOTION_CLIENT_ID?.length)
+  console.log('- CLIENT_SECRET existe?', !!NOTION_CLIENT_SECRET)
+  console.log('- CLIENT_SECRET length:', NOTION_CLIENT_SECRET?.length)
+  console.log('- CLIENT_SECRET começa com "secret_"?', NOTION_CLIENT_SECRET?.startsWith('secret_'))
+  
+  if (!NOTION_CLIENT_ID || !NOTION_CLIENT_SECRET) {
+    throw new Error('Variáveis de ambiente não configuradas corretamente')
+  }
+
   console.log('🔍 DEBUG callback:')
   console.log('- baseUrl:', baseUrl)
   console.log('- NOTION_REDIRECT_URI:', NOTION_REDIRECT_URI)
-  console.log('- NOTION_CLIENT_ID:', NOTION_CLIENT_ID)
 
   try {
     const query = getQuery(event)
@@ -103,7 +113,6 @@ export default defineEventHandler(async (event) => {
   } catch (error: any) {
     console.error('❌ ERRO COMPLETO:', error)
     console.error('❌ ERRO MESSAGE:', error.message)
-    console.error('❌ ERRO STACK:', error.stack)
     
     const session = await useSession(event, getSessionConfig())
     
