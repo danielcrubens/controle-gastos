@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     await session.update({
       error: 'Variáveis de ambiente não configuradas corretamente'
     })
-    return sendRedirect(event, '/')
+    return sendRedirect(event, '/?error=config')
   }
 
   try {
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
       await session.update({
         error: `Erro do Notion: ${errorData.error}`
       })
-      return sendRedirect(event, '/')
+      return sendRedirect(event, '/?error=notion')
     }
 
     const tokenData = await tokenResponse.json()
@@ -79,14 +79,8 @@ export default defineEventHandler(async (event) => {
       })
     })
 
-    const session = await useSession(event, getSessionConfig())
-    
-    await session.update({
-      connectionCode: connectionCode,
-      success: true
-    })
-
-    return sendRedirect(event, '/')
+    // MUDANÇA: Redireciona com o código na URL
+    return sendRedirect(event, `/?success=true&code=${connectionCode}`)
 
   } catch (error: any) {
     const session = await useSession(event, getSessionConfig())
@@ -95,7 +89,7 @@ export default defineEventHandler(async (event) => {
       error: error.message
     })
     
-    return sendRedirect(event, '/')
+    return sendRedirect(event, '/?error=unknown')
   }
 })
 

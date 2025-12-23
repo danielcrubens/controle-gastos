@@ -198,7 +198,6 @@ import confetti from 'canvas-confetti';
 const step = ref(1);
 const loading = ref(false);
 const error = ref("");
-const debugLogs = ref("");
 const connectionCode = ref("");
 const copied = ref(false);
 const botUsername = ref("danielcrubensbot");
@@ -211,7 +210,6 @@ const stepsInstructions = [
 const connectNotion = async () => {
   loading.value = true;
   error.value = "";
-  debugLogs.value = "";
 
   try {
     const response = await fetch('/api/notion/auth-url');
@@ -242,33 +240,26 @@ const launchConfetti = () => {
   });
 };
 
-const checkConnectionStatus = async () => {
-  try {
-    const response = await fetch('/api/connection-status');
-    const data = await response.json();
-
-    if (data.connectionCode) {
-      connectionCode.value = data.connectionCode;
-      step.value = 2;
-      setTimeout(launchConfetti, 310);
-    }
-
-    if (data.error) {
-      error.value = data.error;
-      debugLogs.value = data.debugLogs || "";
-    }
-  } catch (err) {
-    console.error('Erro ao verificar status:', err);
-  }
-};
-
 onMounted(() => {
-  if (window.location.search.includes('code=')) {
-    const cleanUrl = window.location.origin + window.location.pathname
-    window.history.replaceState({}, document.title, cleanUrl)
+  const urlParams = new URLSearchParams(window.location.search);
+  const success = urlParams.get('success');
+  const code = urlParams.get('code');
+  const errorParam = urlParams.get('error');
+
+  if (success === 'true' && code) {
+    connectionCode.value = code;
+    step.value = 2;
+    setTimeout(launchConfetti, 310);
+    
+    const cleanUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
+  } else if (errorParam) {
+    error.value = "Erro ao conectar com Notion. Tente novamente.";
+    
+    const cleanUrl = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanUrl);
   }
-  checkConnectionStatus();
-});
+  });
 </script>
 
 <style scoped>
