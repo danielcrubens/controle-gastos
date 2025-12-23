@@ -7,6 +7,11 @@ export default defineEventHandler(async (event) => {
   const baseUrl = config.public.baseUrl
   const NOTION_REDIRECT_URI = `${baseUrl}/api/notion/callback`
 
+  // LOG para debug
+  console.log('🔍 DEBUG callback:')
+  console.log('- baseUrl:', baseUrl)
+  console.log('- NOTION_REDIRECT_URI:', NOTION_REDIRECT_URI)
+
   try {
     const query = getQuery(event)
     const code = query.code as string
@@ -14,6 +19,8 @@ export default defineEventHandler(async (event) => {
     if (!code) {
       throw new Error('Código de autorização não encontrado')
     }
+
+    console.log('✅ Code recebido:', code)
 
     const tokenResponse = await fetch('https://api.notion.com/v1/oauth/token', {
       method: 'POST',
@@ -29,6 +36,8 @@ export default defineEventHandler(async (event) => {
     })
 
     if (!tokenResponse.ok) {
+      const errorData = await tokenResponse.json()
+      console.error('❌ Erro token Notion:', errorData)
       throw new Error('Erro ao obter token do Notion')
     }
 
@@ -73,10 +82,11 @@ export default defineEventHandler(async (event) => {
       success: true
     })
 
+    console.log('✅ Conexão estabelecida com sucesso!')
     return sendRedirect(event, '/')
 
   } catch (error: any) {
-    console.error('ERRO:', error.message)
+    console.error('❌ ERRO:', error.message)
     
     const session = await useSession(event, getSessionConfig())
     
