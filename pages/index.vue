@@ -263,6 +263,10 @@ const checkConnectionStatus = async () => {
 };
 
 onMounted(() => {
+  if (window.location.search.includes('code=')) {
+    const cleanUrl = window.location.origin + window.location.pathname
+    window.history.replaceState({}, document.title, cleanUrl)
+  }
   checkConnectionStatus();
 });
 </script>
