@@ -7,21 +7,33 @@ export default defineEventHandler(async (event) => {
   const baseUrl = config.public.baseUrl
   const NOTION_REDIRECT_URI = `${baseUrl}/api/notion/callback`
 
-  // VALIDAÇÃO DAS VARIÁVEIS
-  console.log('🔍 VALIDAÇÃO DE VARIÁVEIS:')
-  console.log('- CLIENT_ID existe?', !!NOTION_CLIENT_ID)
-  console.log('- CLIENT_ID length:', NOTION_CLIENT_ID?.length)
-  console.log('- CLIENT_SECRET existe?', !!NOTION_CLIENT_SECRET)
-  console.log('- CLIENT_SECRET length:', NOTION_CLIENT_SECRET?.length)
-  console.log('- CLIENT_SECRET começa com "secret_"?', NOTION_CLIENT_SECRET?.startsWith('secret_'))
+  // Array para coletar logs
+  const debugLogs: string[] = []
   
-  if (!NOTION_CLIENT_ID || !NOTION_CLIENT_SECRET) {
-    throw new Error('Variáveis de ambiente não configuradas corretamente')
+  const log = (msg: string) => {
+    console.log(msg)
+    debugLogs.push(msg)
   }
 
-  console.log('🔍 DEBUG callback:')
-  console.log('- baseUrl:', baseUrl)
-  console.log('- NOTION_REDIRECT_URI:', NOTION_REDIRECT_URI)
+  // VALIDAÇÃO DAS VARIÁVEIS
+  log('🔍 VALIDAÇÃO DE VARIÁVEIS:')
+  log(`- baseUrl: ${baseUrl}`)
+  log(`- CLIENT_ID existe? ${!!NOTION_CLIENT_ID}`)
+  log(`- CLIENT_ID: ${NOTION_CLIENT_ID}`)
+  log(`- CLIENT_SECRET existe? ${!!NOTION_CLIENT_SECRET}`)
+  log(`- CLIENT_SECRET length: ${NOTION_CLIENT_SECRET?.length}`)
+  log(`- CLIENT_SECRET primeiros 10 chars: ${NOTION_CLIENT_SECRET?.substring(0, 10)}...`)
+  log(`- REDIRECT_URI: ${NOTION_REDIRECT_URI}`)
+  
+  if (!NOTION_CLIENT_ID || !NOTION_CLIENT_SECRET) {
+    const errorMsg = 'Variáveis de ambiente não configuradas corretamente'
+    const session = await useSession(event, getSessionConfig())
+    await session.update({
+      error: errorMsg,
+      debugLogs: debugLogs.join('\n')
+    })
+    return sendRedirect(event, '/')
+  }
 
   try {
     const query = getQuery(event)
@@ -31,7 +43,7 @@ export default defineEventHandler(async (event) => {
       throw new Error('Código de autorização não encontrado')
     }
 
-    console.log('✅ Code recebido:', code)
+    log(`✅ Code recebido: ${code}`)
 
     const requestBody = {
       grant_type: 'authorization_code',
@@ -39,27 +51,36 @@ export default defineEventHandler(async (event) => {
       redirect_uri: NOTION_REDIRECT_URI
     }
 
-    console.log('📤 Request body para Notion:', JSON.stringify(requestBody, null, 2))
+    log(`📤 Request body: ${JSON.stringify(requestBody, null, 2)}`)
+
+    const authHeader = `Basic ${Buffer.from(`${NOTION_CLIENT_ID}:${NOTION_CLIENT_SECRET}`).toString('base64')}`
+    log(`🔑 Auth header length: ${authHeader.length}`)
 
     const tokenResponse = await fetch('https://api.notion.com/v1/oauth/token', {
       method: 'POST',
       headers: {
-        'Authorization': `Basic ${Buffer.from(`${NOTION_CLIENT_ID}:${NOTION_CLIENT_SECRET}`).toString('base64')}`,
+        'Authorization': authHeader,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(requestBody)
     })
 
-    console.log('📥 Status da resposta Notion:', tokenResponse.status)
+    log(`📥 Status da resposta Notion: ${tokenResponse.status}`)
 
     if (!tokenResponse.ok) {
       const errorData = await tokenResponse.json()
-      console.error('❌ Erro completo do Notion:', JSON.stringify(errorData, null, 2))
-      throw new Error(`Erro do Notion: ${JSON.stringify(errorData)}`)
+      log(`❌ Erro do Notion: ${JSON.stringify(errorData, null, 2)}`)
+      
+      const session = await useSession(event, getSessionConfig())
+      await session.update({
+        error: `Erro do Notion: ${errorData.error}`,
+        debugLogs: debugLogs.join('\n')
+      })
+      return sendRedirect(event, '/')
     }
 
     const tokenData = await tokenResponse.json()
-    console.log('✅ Token obtido com sucesso')
+    log('✅ Token obtido com sucesso')
     const accessToken = tokenData.access_token
 
     const searchResponse = await fetch('https://api.notion.com/v1/search', {
@@ -75,7 +96,7 @@ export default defineEventHandler(async (event) => {
     })
 
     const searchData = await searchResponse.json()
-    console.log('📊 Databases encontradas:', searchData.results?.length || 0)
+    log(`📊 Databases encontradas: ${searchData.results?.length || 0}`)
     
     const targetDatabase = searchData.results?.[0]
 
@@ -83,11 +104,11 @@ export default defineEventHandler(async (event) => {
       throw new Error('Nenhuma database encontrada no Notion')
     }
 
-    console.log('✅ Database selecionada:', targetDatabase.id)
+    log(`✅ Database selecionada: ${targetDatabase.id}`)
 
     const connectionCode = generateRandomCode()
 
-    console.log('📤 Enviando para N8N...')
+    log('📤 Enviando para N8N...')
     const n8nResponse = await fetch(N8N_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -98,7 +119,7 @@ export default defineEventHandler(async (event) => {
       })
     })
 
-    console.log('📥 N8N response status:', n8nResponse.status)
+    log(`📥 N8N response status: ${n8nResponse.status}`)
 
     const session = await useSession(event, getSessionConfig())
     
@@ -107,17 +128,17 @@ export default defineEventHandler(async (event) => {
       success: true
     })
 
-    console.log('✅ Conexão estabelecida com sucesso! Code:', connectionCode)
+    log(`✅ Conexão estabelecida com sucesso! Code: ${connectionCode}`)
     return sendRedirect(event, '/')
 
   } catch (error: any) {
-    console.error('❌ ERRO COMPLETO:', error)
-    console.error('❌ ERRO MESSAGE:', error.message)
+    log(`❌ ERRO: ${error.message}`)
     
     const session = await useSession(event, getSessionConfig())
     
     await session.update({
-      error: error.message
+      error: error.message,
+      debugLogs: debugLogs.join('\n')
     })
     
     return sendRedirect(event, '/')

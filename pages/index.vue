@@ -12,6 +12,17 @@
       </div>
 
       <main class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl xl:p-8 p-4">
+         <div v-if="error" class="mt-4 bg-red-50 border-l-4 border-red-600 p-4">
+          <p class="text-sm text-red-900 font-semibold mb-2">{{ error }}</p>
+          
+          <!-- Logs de debug -->
+          <details v-if="debugLogs" class="mt-3">
+            <summary class="cursor-pointer text-xs text-red-700 hover:text-red-900 font-medium">
+              🔍 Ver logs de debug
+            </summary>
+            <pre class="mt-2 text-xs bg-red-100 p-3 rounded overflow-x-auto text-red-900">{{ debugLogs }}</pre>
+          </details>
+        </div>
         <div class="mb-4">
           <div class="flex items-center justify-between">
             <div :class="['flex-1 text-center', step >= 1 ? 'text-blue-900' : 'text-gray-400']">
@@ -187,6 +198,7 @@ import confetti from 'canvas-confetti';
 const step = ref(1);
 const loading = ref(false);
 const error = ref("");
+const debugLogs = ref("");
 const connectionCode = ref("");
 const copied = ref(false);
 const botUsername = ref("danielcrubensbot");
@@ -199,6 +211,7 @@ const stepsInstructions = [
 const connectNotion = async () => {
   loading.value = true;
   error.value = "";
+  debugLogs.value = "";
 
   try {
     const response = await fetch('/api/notion/auth-url');
@@ -242,6 +255,7 @@ const checkConnectionStatus = async () => {
 
     if (data.error) {
       error.value = data.error;
+      debugLogs.value = data.debugLogs || "";
     }
   } catch (err) {
     console.error('Erro ao verificar status:', err);

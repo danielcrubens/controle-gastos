@@ -1,15 +1,10 @@
 export default defineEventHandler(async (event) => {
   const session = await useSession(event, getSessionConfig())
-
-  const data = await session.data
-
-  if (data.connectionCode || data.error) {
-    await session.clear()
-  }
-
+  
   return {
-    connectionCode: data.connectionCode || null,
-    error: data.error || null,
-    success: data.success || false
+    connectionCode: session.data.connectionCode || null,
+    success: session.data.success || false,
+    error: session.data.error || null,
+    debugLogs: session.data.debugLogs || null
   }
 })
