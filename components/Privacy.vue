@@ -4,14 +4,11 @@
       class="fixed inset-0 z-50 flex items-center justify-center p-4"
       @click.self="closeModal"
     >
-      <!-- Backdrop -->
       <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
 
-      <!-- Modal -->
       <div
         class="relative bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[85vh] overflow-hidden"
       >
-        <!-- Header -->
         <div
           class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between"
         >
@@ -20,7 +17,6 @@
           </h2>
         </div>
 
-        <!-- Content -->
         <div class="px-6 py-6 overflow-y-auto max-h-[calc(85vh-80px)]">
           <div class="prose prose-sm max-w-none text-gray-700 space-y-6">
             <section>
@@ -222,8 +218,6 @@
               </p>
             </section>
 
-        
-
             <section>
               <h3 class="text-lg font-semibold text-[#191919] mb-3">
                 10. Contato
@@ -245,7 +239,6 @@
           </div>
         </div>
 
-        <!-- Footer -->
         <div class="sticky bottom-0 px-6 pt-4 pb-2 bg-white">
           <button
             @click="closeModal"
@@ -262,9 +255,6 @@
   h3{
    @apply text-lg font-semibold text-[#191919] mb-3
   }
-/* p, li {
-  @apply text-zinc-500 ;
-} */
 </style>
 
 <script setup>

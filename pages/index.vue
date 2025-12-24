@@ -15,13 +15,7 @@
          <div v-if="error" class="mt-4 bg-red-50 border-l-4 border-red-600 p-4">
           <p class="text-sm text-red-900 font-semibold mb-2">{{ error }}</p>
           
-          <!-- Logs de debug -->
-          <details v-if="debugLogs" class="mt-3">
-            <summary class="cursor-pointer text-xs text-red-700 hover:text-red-900 font-medium">
-              🔍 Ver logs de debug
-            </summary>
-            <pre class="mt-2 text-xs bg-red-100 p-3 rounded overflow-x-auto text-red-900">{{ debugLogs }}</pre>
-          </details>
+          
         </div>
         <div class="mb-4">
           <div class="flex items-center justify-between">
