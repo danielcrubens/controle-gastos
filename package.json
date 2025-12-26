@@ -16,6 +16,7 @@
     "h3-session": "^0.2.5",
     "lucide-vue-next": "^0.554.0",
     "nuxt": "^3.19.3",
+    "nuxt-gtag": "^4.1.0",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
   },

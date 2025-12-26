@@ -1,8 +1,17 @@
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-    app: {
+     app: {
     head: {
+     title: 'Controle de gastos',
+      htmlAttrs: {
+        lang: 'pt-BR',
+      },
+      meta: [
+        { charset: 'utf-8' },
+        { name: 'description', content: 'DER - Departamento de Estradas de Rodagem' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      ],
       link: [
         {
           rel: "stylesheet",
@@ -10,8 +19,10 @@ export default defineNuxtConfig({
         },
       ],
     },
-  },
-   modules: ['@nuxtjs/tailwindcss', "@nuxtjs/google-fonts"],
+  }, 
+
+   modules: ['@nuxtjs/tailwindcss', "@nuxtjs/google-fonts", 'nuxt-gtag'],
+
  googleFonts: {
     base64: true,
     overwriting: true,
@@ -19,6 +30,11 @@ export default defineNuxtConfig({
       'Inter': [300,400,500,700],
     }
   },
+
+   gtag: {
+    id: process.env.GTAG_ID
+  },
+
    runtimeConfig: {
     notionClientId: process.env.NOTION_CLIENT_ID,
     notionClientSecret: process.env.NOTION_CLIENT_SECRET,
