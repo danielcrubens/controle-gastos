@@ -9,8 +9,9 @@ export default defineNuxtConfig({
       },
       meta: [
         { charset: 'utf-8' },
-        { name: 'description', content: 'DER - Departamento de Estradas de Rodagem' },
+        { name: 'description', content: 'Registre suas despesas enviando áudios no Telegram e salve automaticamente no seu Notion.' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { name: 'google-site-verification', content: 'DnWKiDDuDQo0Rl84HSC-kfrpSECfAIaXj6PpGcmMlcc' },
       ],
       link: [
         {
