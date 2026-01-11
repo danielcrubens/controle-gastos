@@ -11,12 +11,15 @@
   },
   "dependencies": {
     "@nuxtjs/google-fonts": "^3.2.0",
+    "@unhead/vue": "^2.1.2",
     "canvas-confetti": "^1.9.4",
     "dotenv": "^17.2.3",
     "h3-session": "^0.2.5",
     "lucide-vue-next": "^0.554.0",
-    "nuxt": "^3.19.3",
+    "nuxt": "^4.2.2",
     "nuxt-gtag": "^4.1.0",
+    "nuxt-og-image": "^5.1.13",
+    "unstorage": "^1.17.3",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
   },

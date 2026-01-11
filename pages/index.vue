@@ -189,6 +189,12 @@ import { ref, onMounted } from "vue";
 import { Lock, Bot, Zap, CircleCheckBig, Clipboard, Smartphone, ListCheck, Mic, Loader } from 'lucide-vue-next';
 import confetti from 'canvas-confetti';
 
+defineOgImageComponent('Main', {
+  headline: 'Greetings',
+  title: 'Controle de Gastos por Voz',
+  description: 'Registre suas despesas enviando áudios no Telegram e salve automaticamente no seu Notion.',
+})
+
 const step = ref(1);
 const loading = ref(false);
 const error = ref("");

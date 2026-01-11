@@ -224,8 +224,7 @@
               </h3>
               <p>
                 Se você tiver dúvidas sobre esta política de privacidade ou
-                sobre como tratamos seus dados, entre em contato conosco através
-                do bot no Telegram ou pelo email:
+                sobre como tratamos seus dados, entre em contato conosco pelo email:
                 <a
                   href="mailto:dcr.tecnologi@gmail.com"
                   class="text-blue-600 hover:underline"

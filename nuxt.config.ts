@@ -22,7 +22,7 @@ export default defineNuxtConfig({
     },
   }, 
 
-   modules: ['@nuxtjs/tailwindcss', "@nuxtjs/google-fonts", 'nuxt-gtag'],
+   modules: ['@nuxtjs/tailwindcss', "@nuxtjs/google-fonts", 'nuxt-gtag', 'nuxt-og-image'],
 
  googleFonts: {
     base64: true,
@@ -46,4 +46,15 @@ export default defineNuxtConfig({
       baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000'
     }
   },
+     ogImage: {
+      fonts: ['Inter:400', 'Inter:700'],
+        defaults: {
+      width: 1200,
+      height: 600,
+    }
+    },
+     site: { 
+ url: 'http://localhost:3000/', 
+ name: 'My Awesome Website' 
+ }, 
 })
