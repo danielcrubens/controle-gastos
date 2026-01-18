@@ -1,6 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#191919] text-zinc-50 antialiased">
-    <transition
+  <transition
   enter-active-class="transition ease-out duration-300"
   enter-from-class="opacity-0 translate-y-2"
   enter-to-class="opacity-100 translate-y-0"
@@ -10,16 +9,16 @@
 >
   <div
     v-if="showToast"
-    class="fixed top-4 left-1/2 w-11/12 xl:w-11/6 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 z-50"
+    class="fixed top-4 left-1/2 md:left-auto md:right-4 w-10/12 md:w-auto md:max-w-sm transform -translate-x-1/2 md:translate-x-0 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 z-50"
   >
     <CircleCheckBig :size="20" />
     <span class="font-medium">Código copiado com sucesso!</span>
   </div>
-    </transition>
+</transition>
+  <div class="min-h-screen bg-[#191919] text-zinc-50 antialiased">
     <div class="container mx-auto px-4 py-16">
       <div class="text-center mb-16">
         <h1 class="xl:text-4xl text-2xl  flex justify-center items-center gap-1 font-bold text-zinc-100 mb-4">
-          <Mic />
           Controle de Gastos por Voz
         </h1>
         <p class="xl:text-xl  text-zinc-400 max-w-2xl mx-auto">
