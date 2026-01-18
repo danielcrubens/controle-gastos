@@ -79,9 +79,6 @@ export default defineEventHandler(async (event) => {
       })
     })
 
-    // MUDANÇA: Redireciona com o código na URL
-    return sendRedirect(event, `/?success=true&code=${connectionCode}`)
-
   } catch (error: any) {
     const session = await useSession(event, getSessionConfig())
     
@@ -96,7 +93,7 @@ export default defineEventHandler(async (event) => {
 function generateRandomCode(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
   let code = ''
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < 6; i++) {
     code += chars.charAt(Math.floor(Math.random() * chars.length))
   }
   return code
