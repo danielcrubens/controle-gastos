@@ -79,6 +79,8 @@ export default defineEventHandler(async (event) => {
       })
     })
 
+    return sendRedirect(event, `/?success=true&code=${connectionCode}`)
+
   } catch (error: any) {
     const session = await useSession(event, getSessionConfig())
     
