@@ -1,5 +1,21 @@
 <template>
   <div class="min-h-screen bg-[#191919] text-zinc-50 antialiased">
+    <transition
+  enter-active-class="transition ease-out duration-300"
+  enter-from-class="opacity-0 translate-y-2"
+  enter-to-class="opacity-100 translate-y-0"
+  leave-active-class="transition ease-in duration-200"
+  leave-from-class="opacity-100 translate-y-0"
+  leave-to-class="opacity-0 translate-y-2"
+>
+  <div
+    v-if="showToast"
+    class="fixed top-4 left-1/2 w-11/12 xl:w-11/6 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg flex items-center justify-center gap-2 z-50"
+  >
+    <CircleCheckBig :size="20" />
+    <span class="font-medium">Código copiado com sucesso!</span>
+  </div>
+    </transition>
     <div class="container mx-auto px-4 py-16">
       <div class="text-center mb-16">
         <h1 class="xl:text-4xl text-2xl  flex justify-center items-center gap-1 font-bold text-zinc-100 mb-4">
@@ -201,6 +217,7 @@ const error = ref("");
 const connectionCode = ref("");
 const copied = ref(false);
 const botUsername = ref("danielcrubensbot");
+const showToast = ref(false);
 
 const stepsInstructions = [
   'Grave um áudio dizendo a despesa',
@@ -229,7 +246,9 @@ const connectNotion = async () => {
 const copyCode = () => {
   navigator.clipboard.writeText(`/start ${connectionCode.value}`);
   copied.value = true;
+  showToast.value = true;
   setTimeout(() => (copied.value = false), 2000);
+  setTimeout(() => (showToast.value = false), 3000);
 };
 
 const launchConfetti = () => {
