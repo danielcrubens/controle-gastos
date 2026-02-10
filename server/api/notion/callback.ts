@@ -5,16 +5,8 @@ export default defineEventHandler(async (event) => {
   const NOTION_CLIENT_SECRET = config.notionClientSecret
   const N8N_WEBHOOK_URL = config.n8nWebhookUrl
   const baseUrl = config.public.baseUrl
-  // Remove barra final do baseUrl se existir
   const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl
   const NOTION_REDIRECT_URI = `${cleanBaseUrl}/api/notion/callback`
-
-  // DEBUG - Callback
-  console.log('=== CALLBACK DEBUG ===')
-  console.log('baseUrl original:', baseUrl)
-  console.log('baseUrl limpo:', cleanBaseUrl)
-  console.log('NOTION_REDIRECT_URI:', NOTION_REDIRECT_URI)
-  console.log('======================')
 
   if (!NOTION_CLIENT_ID || !NOTION_CLIENT_SECRET) {
     const session = await useSession(event, getSessionConfig())
@@ -47,12 +39,6 @@ export default defineEventHandler(async (event) => {
 
     if (!tokenResponse.ok) {
       const errorData = await tokenResponse.json()
-      // DEBUG - Erro no token
-      console.log('=== TOKEN ERROR DEBUG ===')
-      console.log('Status:', tokenResponse.status)
-      console.log('ErrorData:', JSON.stringify(errorData, null, 2))
-      console.log('========================')
-
       const session = await useSession(event, getSessionConfig())
       await session.update({
         error: `Erro do Notion: ${errorData.error}`
