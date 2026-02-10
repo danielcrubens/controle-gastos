@@ -1,0 +1,5 @@
+[build]
+  command = "npm run build"
+
+[context.production.environment]
+  NUXT_PUBLIC_BASE_URL = "https://faleiepronto.com.br"
