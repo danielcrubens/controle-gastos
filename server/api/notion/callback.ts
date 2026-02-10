@@ -1,12 +1,18 @@
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig(event)
-  
+
   const NOTION_CLIENT_ID = config.notionClientId
   const NOTION_CLIENT_SECRET = config.notionClientSecret
   const N8N_WEBHOOK_URL = config.n8nWebhookUrl
   const baseUrl = config.public.baseUrl
   const NOTION_REDIRECT_URI = `${baseUrl}/api/notion/callback`
-  
+
+  // DEBUG - Callback
+  console.log('=== CALLBACK DEBUG ===')
+  console.log('baseUrl:', baseUrl)
+  console.log('NOTION_REDIRECT_URI:', NOTION_REDIRECT_URI)
+  console.log('======================')
+
   if (!NOTION_CLIENT_ID || !NOTION_CLIENT_SECRET) {
     const session = await useSession(event, getSessionConfig())
     await session.update({
@@ -38,6 +44,12 @@ export default defineEventHandler(async (event) => {
 
     if (!tokenResponse.ok) {
       const errorData = await tokenResponse.json()
+      // DEBUG - Erro no token
+      console.log('=== TOKEN ERROR DEBUG ===')
+      console.log('Status:', tokenResponse.status)
+      console.log('ErrorData:', JSON.stringify(errorData, null, 2))
+      console.log('========================')
+
       const session = await useSession(event, getSessionConfig())
       await session.update({
         error: `Erro do Notion: ${errorData.error}`

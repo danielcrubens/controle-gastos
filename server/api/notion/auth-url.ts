@@ -6,5 +6,13 @@ export default defineEventHandler((event) => {
   const notionAuthUrl = "https://api.notion.com/v1/oauth/authorize"
   const authUrl = `${notionAuthUrl}?client_id=${clientId}&response_type=code&owner=user&redirect_uri=${encodeURIComponent(redirectUri)}`
 
+  // DEBUG - Verificar valores em produção
+  console.log('=== AUTH-URL DEBUG ===')
+  console.log('clientId:', clientId)
+  console.log('baseUrl:', baseUrl)
+  console.log('redirectUri:', redirectUri)
+  console.log('authUrl completa:', authUrl)
+  console.log('======================')
+
   return { authUrl }
 })
