@@ -43,7 +43,7 @@ export default defineNuxtConfig({
     sessionSecret: process.env.SESSION_SECRET,
     
     public: {
-      baseUrl: process.env.NUXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      baseUrl: process.env.NUXT_PUBLIC_BASE_URL 
     }
   },
      ogImage: {
@@ -53,8 +53,4 @@ export default defineNuxtConfig({
       height: 600,
     }
     },
-     site: { 
- url: 'http://localhost:3000/', 
- name: 'My Awesome Website' 
- }, 
 })
