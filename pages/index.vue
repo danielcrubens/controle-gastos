@@ -135,7 +135,7 @@
                 </span>
                 <span>
                   Envie o comando
-                  <code class="bg-gray-100 px-2 py-1 rounded">/start {{ connectionCode }}</code>
+                  <code class="bg-gray-100 px-1.5 py-1 rounded">/start {{ connectionCode }}</code>
                 </span>
               </li>
 
@@ -157,7 +157,22 @@
                 </span>
                 <span>
                   Envie o comando
-                  <code class="bg-gray-100 px-2 py-1 rounded">/resumo </code>
+                  <code class="bg-gray-100 px-1.5 py-1 rounded">/resumo </code>
+                </span>
+              </li>
+            </ul>
+            <h3 class="font-semibold mr-2 my-3 text-[#191919] flex gap-1">
+              <Smartphone :size="20" /> Como ver a regra 70/20/10:
+            </h3>
+
+            <ul class="space-y-2 text-gray-600">
+              <li class="flex items-start">
+                <span class="mr-2 text-[#191919] flex-shrink-0">
+                  <ListCheck :size="20" />
+                </span>
+                <span>
+                  Envie o comando
+                  <code class="bg-gray-100 px-1.5 py-1 rounded">/regra (valor salário) </code>
                 </span>
               </li>
             </ul>
