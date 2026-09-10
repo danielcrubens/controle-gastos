@@ -204,7 +204,7 @@ export class UpdateRouterService {
       const username = user.telegram_username
         ? `@${user.telegram_username}`
         : '—';
-      await fetch(this.discordWebhookUrl, {
+      const response = await fetch(this.discordWebhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -215,6 +215,14 @@ export class UpdateRouterService {
             `**ID:** ${user.telegram_id}`,
         }),
       });
+      if (!response.ok) {
+        this.logger.warn(
+          JSON.stringify({
+            event: 'discord_notification_rejected',
+            status: response.status,
+          }),
+        );
+      }
     } catch (error) {
       this.logger.warn(
         JSON.stringify({
