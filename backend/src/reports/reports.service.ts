@@ -10,7 +10,7 @@ import { getAppConfig } from '../config/configuration.js';
 import { NotionService } from '../notion/notion.service.js';
 import { BudgetRuleService } from './budget-rule.service.js';
 import { aggregateByCategory } from './aggregate.js';
-import { BudgetRuleResult } from './reports.types.js';
+import { BudgetRuleResult, MonthlyReport } from './reports.types.js';
 
 const CATEGORY_EMOJI: Record<string, string> = {
   Alimentação: '🍔',
@@ -23,6 +23,35 @@ const CATEGORY_EMOJI: Record<string, string> = {
   Serviços: '🧰',
   Outros: '📦',
 };
+
+/** Barra de 20 blocos: cada posição equivale a ~5% do total. */
+const BAR_SLOTS = 20;
+
+/**
+ * Corpo do resumo mensal: cada categoria recebe uma barra de blocos
+ * ("pizza de texto") com a fatia percentual sobre o total do período.
+ */
+export function formatMonthlySummary(report: MonthlyReport): string {
+  let mensagem = '';
+  for (const { categoria, total } of report.porCategoria) {
+    const emoji = CATEGORY_EMOJI[categoria] ?? '📦';
+    const pct = report.total > 0 ? Math.round((total / report.total) * 100) : 0;
+    const pctLabel = total > 0 && pct === 0 ? '<1%' : `${pct}%`;
+    mensagem += `${emoji} ${categoria}: ${shareBar(pct, total)} ${pctLabel} · ${formatBRL(total)}\n`;
+  }
+  mensagem +=
+    `\n💰 *TOTAL: ${formatBRL(report.total)}*\n` +
+    `📝 _${report.quantidade} despesa${report.quantidade !== 1 ? 's' : ''} registrada${report.quantidade !== 1 ? 's' : ''}_`;
+
+  return mensagem;
+}
+
+function shareBar(pct: number, categoryTotal: number): string {
+  const filled = Math.min(BAR_SLOTS, Math.round((pct / 100) * BAR_SLOTS));
+  // Fatia <2,5% arredondaria para zero blocos; mostra ao menos 1 quando há valor.
+  const visible = Math.max(categoryTotal > 0 ? 1 : 0, filled);
+  return '█'.repeat(visible) + '░'.repeat(BAR_SLOTS - visible);
+}
 
 @Injectable()
 export class ReportsService {
@@ -57,16 +86,7 @@ export class ReportsService {
       );
     }
 
-    let mensagem = `📊 *Resumo de ${range.label}*\n\n`;
-    for (const { categoria, total } of report.porCategoria) {
-      const emoji = CATEGORY_EMOJI[categoria] ?? '📦';
-      mensagem += `${emoji} ${categoria}: ${formatBRL(total)}\n`;
-    }
-    mensagem +=
-      `\n💰 *TOTAL: ${formatBRL(report.total)}*\n` +
-      `📝 _${report.quantidade} despesa${report.quantidade !== 1 ? 's' : ''} registrada${report.quantidade !== 1 ? 's' : ''}_`;
-
-    return mensagem;
+    return `📊 *Resumo de ${range.label}*\n\n` + formatMonthlySummary(report);
   }
 
   /** /regra — paridade com o n8n: exige o valor como argumento. */
