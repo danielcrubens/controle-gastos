@@ -29,7 +29,7 @@ A tabela tem RLS habilitado **sem policies**: apenas a `SUPABASE_SERVICE_ROLE_KE
 Nenhuma mudança de código — só apontar a env do front para o backend:
 
 ```
-N8N_WEBHOOK_URL=https://<seu-backend>/webhooks/notion-auth
+BACKEND_WEBHOOK_URL=https://<seu-backend>/webhooks/notion-auth
 ```
 
 O contrato enviado pelo front é `{ connection_code, notion_access_token, notion_database_id }`

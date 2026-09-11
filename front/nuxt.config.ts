@@ -39,7 +39,7 @@ export default defineNuxtConfig({
    runtimeConfig: {
     notionClientId: process.env.NOTION_CLIENT_ID,
     notionClientSecret: process.env.NOTION_CLIENT_SECRET,
-    n8nWebhookUrl: process.env.N8N_WEBHOOK_URL,
+    backendWebhookUrl: process.env.BACKEND_WEBHOOK_URL,
     sessionSecret: process.env.SESSION_SECRET,
     
     public: {

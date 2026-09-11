@@ -3,7 +3,7 @@ export default defineEventHandler(async (event) => {
 
   const NOTION_CLIENT_ID = config.notionClientId
   const NOTION_CLIENT_SECRET = config.notionClientSecret
-  const N8N_WEBHOOK_URL = config.n8nWebhookUrl
+  const BACKEND_WEBHOOK_URL = config.backendWebhookUrl
   const baseUrl = config.public.baseUrl
   const cleanBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl
   const NOTION_REDIRECT_URI = `${cleanBaseUrl}/api/notion/callback`
@@ -70,7 +70,7 @@ export default defineEventHandler(async (event) => {
 
     const connectionCode = generateRandomCode()
 
-    const webhookResponse = await fetch(N8N_WEBHOOK_URL, {
+    const webhookResponse = await fetch(BACKEND_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

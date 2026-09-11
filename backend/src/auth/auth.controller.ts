@@ -4,7 +4,7 @@ import { NotionAuthWebhookDto } from './dto/notion-auth-webhook.dto.js';
 
 /**
  * Substitui o webhook `notion-auth` do n8n: recebe os tokens OAuth do Notion
- * gerados no onboarding do front (que aponta N8N_WEBHOOK_URL para cá).
+ * gerados no onboarding do front (que aponta BACKEND_WEBHOOK_URL para cá).
  */
 @Controller('webhooks')
 export class AuthController {
