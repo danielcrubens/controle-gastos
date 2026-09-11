@@ -70,7 +70,7 @@ export default defineEventHandler(async (event) => {
 
     const connectionCode = generateRandomCode()
 
-    await fetch(N8N_WEBHOOK_URL, {
+    const webhookResponse = await fetch(N8N_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -79,6 +79,10 @@ export default defineEventHandler(async (event) => {
         notion_database_id: targetDatabase.id
       })
     })
+
+    if (!webhookResponse.ok) {
+      throw new Error('Falha ao registrar a conexão no servidor')
+    }
 
     return sendRedirect(event, `/?success=true&code=${connectionCode}`)
 
