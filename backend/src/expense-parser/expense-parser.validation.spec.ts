@@ -84,6 +84,17 @@ describe('validateAndNormalizeExpense', () => {
     expect(expense.categoria).toBe('Outros');
   });
 
+  it('mantem Despesa Fixa sem cair no fallback', () => {
+    const input = {
+      descricao: 'aluguel apartamento',
+      categoria: 'Despesa Fixa',
+      data: '2026-09-01',
+      valor: 1200,
+    };
+    const expense = validateAndNormalizeExpense(input, REF);
+    expect(expense.categoria).toBe('Despesa Fixa');
+  });
+
   it('usa a data de referencia quando a data vem invalida', () => {
     const input = {
       descricao: 'cinema',

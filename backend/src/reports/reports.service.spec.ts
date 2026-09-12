@@ -54,4 +54,19 @@ describe('formatMonthlySummary', () => {
     expect(mensagem).toContain('120,00');
     expect(mensagem).toContain('2 despesas registradas');
   });
+
+  it('mostra Despesa Fixa com o pino 📌', () => {
+    const mensagem = formatMonthlySummary({
+      total: 100,
+      quantidade: 2,
+      porCategoria: [
+        { categoria: 'Despesa Fixa', total: 70 },
+        { categoria: 'Transporte', total: 30 },
+      ],
+    });
+
+    // 70% de 20 blocos = 14 cheios; 30% = 6 cheios
+    expect(mensagem).toContain('📌 Despesa Fixa: ██████████████░░░░░░ 70%');
+    expect(mensagem).toContain('🚗 Transporte: ██████░░░░░░░░░░░░░░ 30%');
+  });
 });

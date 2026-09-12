@@ -55,4 +55,18 @@ describe('aggregateByCategory', () => {
     expect(report.total).toBe(0);
     expect(report.quantidade).toBe(1);
   });
+
+  it('agrupa Despesa Fixa como qualquer outra categoria', () => {
+    const report = aggregateByCategory([
+      { valor: 800, categoria: 'Despesa Fixa' },
+      { valor: 400, categoria: 'Despesa Fixa' },
+      { valor: 30, categoria: 'Transporte' },
+    ]);
+    expect(report.total).toBe(1230);
+    expect(report.quantidade).toBe(3);
+    expect(report.porCategoria).toEqual([
+      { categoria: 'Despesa Fixa', total: 1200 },
+      { categoria: 'Transporte', total: 30 },
+    ]);
+  });
 });
