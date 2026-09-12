@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { GoogleGenAI, Type } from '@google/genai';
+import { ApiError, GoogleGenAI, Type } from '@google/genai';
 import { EXPENSE_CATEGORIES } from '../common/categories.js';
 import { getAppConfig } from '../config/configuration.js';
 import {
@@ -39,6 +39,58 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
   });
 }
 
+/** Erros transitórios do Google: sobrecarga (5xx, ex. 503 UNAVAILABLE) e rate limit (429). */
+export function isRetryableGeminiError(error: unknown): boolean {
+  return (
+    error instanceof ApiError &&
+    (error.status === 429 || error.status >= 500)
+  );
+}
+
+const GEMINI_MAX_ATTEMPTS = 3;
+const GEMINI_RETRY_BASE_DELAY_MS = 1500;
+
+interface RetryOptions {
+  /** Sobrescreve o critério de "vale nova tentativa" (uso em testes). */
+  isRetryable?: (error: unknown) => boolean;
+  /** Sobrescreve a espera entre tentativas (uso em testes). */
+  sleep?: (ms: number) => Promise<void>;
+  /** Observa cada nova tentativa (log de `gemini_retry` no serviço). */
+  onRetry?: (attempt: number, delayMs: number, error: unknown) => void;
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(resolve, ms);
+    timer.unref?.();
+  });
+}
+
+/**
+ * Repete a chamada em falhas transitórias do Google (429/5xx) com backoff
+ * exponencial curto (1,5s, 3s). Outros erros e a última tentativa repassam
+ * como estão — quem mapeia para a mensagem do bot é o fluxo de voz.
+ */
+export async function withRetry<T>(
+  call: () => Promise<T>,
+  options: RetryOptions = {},
+): Promise<T> {
+  const isRetryable = options.isRetryable ?? isRetryableGeminiError;
+  const pause = options.sleep ?? sleep;
+  for (let attempt = 1; ; attempt += 1) {
+    try {
+      return await call();
+    } catch (error) {
+      if (attempt >= GEMINI_MAX_ATTEMPTS || !isRetryable(error)) {
+        throw error;
+      }
+      const delayMs = GEMINI_RETRY_BASE_DELAY_MS * 2 ** (attempt - 1);
+      options.onRetry?.(attempt, delayMs, error);
+      await pause(delayMs);
+    }
+  }
+}
+
 @Injectable()
 export class ExpenseParserService {
   private readonly logger = new Logger(ExpenseParserService.name);
@@ -72,33 +124,51 @@ Regras:
 - Nunca invente informações que não estejam no áudio.`;
 
     try {
-      const response = await withTimeout(
-        this.genai.models.generateContent({
-          model: this.model,
-          contents: [
-            {
-              role: 'user',
-              parts: [
-                { text: prompt },
-                { inlineData: { mimeType, data: audio.toString('base64') } },
-              ],
-            },
-          ],
-          config: {
-            responseMimeType: 'application/json',
-            responseSchema: {
-              type: Type.OBJECT,
-              properties: {
-                descricao: { type: Type.STRING },
-                categoria: { type: Type.STRING, enum: [...EXPENSE_CATEGORIES] },
-                data: { type: Type.STRING },
-                valor: { type: Type.NUMBER, nullable: true },
+      const response = await withRetry(() =>
+        withTimeout(
+          this.genai.models.generateContent({
+            model: this.model,
+            contents: [
+              {
+                role: 'user',
+                parts: [
+                  { text: prompt },
+                  { inlineData: { mimeType, data: audio.toString('base64') } },
+                ],
               },
-              required: ['descricao', 'categoria', 'data', 'valor'],
+            ],
+            config: {
+              responseMimeType: 'application/json',
+              responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                  descricao: { type: Type.STRING },
+                  categoria: {
+                    type: Type.STRING,
+                    enum: [...EXPENSE_CATEGORIES],
+                  },
+                  data: { type: Type.STRING },
+                  valor: { type: Type.NUMBER, nullable: true },
+                },
+                required: ['descricao', 'categoria', 'data', 'valor'],
+              },
             },
+          }),
+          GEMINI_TIMEOUT_MS,
+        ),
+        {
+          onRetry: (attempt, delayMs, error) => {
+            this.logger.warn(
+              JSON.stringify({
+                event: 'gemini_retry',
+                attempt,
+                delay_ms: delayMs,
+                status: error instanceof ApiError ? error.status : undefined,
+                error: error instanceof Error ? error.message : String(error),
+              }),
+            );
           },
-        }),
-        GEMINI_TIMEOUT_MS,
+        },
       );
 
       const raw = response.text ?? '';
