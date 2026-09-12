@@ -22,6 +22,7 @@ const CATEGORY_EMOJI: Record<string, string> = {
   Educação: '📚',
   Serviços: '🧰',
   Outros: '📦',
+  'Despesa Fixa': '📌'
 };
 
 /** Barra de 20 blocos: cada posição equivale a ~5% do total. */

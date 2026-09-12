@@ -9,6 +9,7 @@ export const EXPENSE_CATEGORIES = [
   'Educação',
   'Serviços',
   'Outros',
+  'Despesa Fixa'
 ] as const;
 
 export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
