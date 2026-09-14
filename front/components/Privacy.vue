@@ -41,8 +41,8 @@
               </p>
               <ul class="list-disc pl-6 space-y-2">
                 <li>
-                  <strong>Token de Acesso do Notion:</strong> Usado
-                  temporariamente durante a autenticação OAuth
+                  <strong>Token de Acesso do Notion:</strong> Armazenado
+                  exclusivamente para gravar as despesas no seu Notion
                 </li>
                 <li>
                   <strong>ID do Banco de Dados:</strong> Identificador da
@@ -78,8 +78,8 @@
               <ol class="list-decimal pl-6 space-y-2">
                 <li>Você autoriza a conexão com Notion via OAuth 2.0</li>
                 <li>
-                  As credenciais são enviadas diretamente para o webhook n8n
-                  (nosso processador de automação)
+                  As credenciais são enviadas diretamente para o nosso servidor
+                  (nossa própria API, responsável pelo processamento)
                 </li>
                 <li>O bot Telegram recebe seus áudios e os processa via IA</li>
                 <li>As despesas são salvas diretamente no SEU Notion</li>
@@ -88,9 +88,10 @@
                 class="mt-3 p-3 bg-blue-50 border-l-4 border-blue-500 rounded"
               >
                 <p class="text-sm text-blue-900">
-                  <strong>🔒 Segurança:</strong> Não possuímos banco de dados
-                  próprio. Todas as informações trafegam de forma criptografada
-                  (HTTPS) e não são armazenadas em nossos servidores.
+                  <strong>🔒 Segurança:</strong> Todas as informações trafegam
+                  de forma criptografada (HTTPS) e armazenamos apenas os dados
+                  mínimos de conexão (veja a seção 5) — nada do conteúdo das
+                  suas mensagens ou despesas.
                 </p>
               </div>
             </section>
@@ -115,27 +116,25 @@
 
             <section>
               <h3 class="text-lg font-bold text-[#191919] mb-3">
-                5. Armazenamento (ou melhor, a falta dele)
+                5. Armazenamento
               </h3>
               <p class="mb-2">
-                <strong>Não armazenamos seus dados.</strong> Veja como funciona:
+                Armazenamos o mínimo necessário para manter a sua conexão
+                funcionando, em banco de dados hospedado no
+                <strong>Supabase</strong>:
               </p>
               <ul class="list-disc pl-6 space-y-2">
                 <li>
-                  <strong>Sessão temporária:</strong> Dados mantidos apenas
-                  durante a autenticação OAuth
-                </li>
-                <li>
-                  <strong>Sem banco de dados:</strong> A aplicação não possui
-                  storage permanente
+                  <strong>Dados de conexão:</strong> Token de acesso do Notion,
+                  ID da database, código de conexão e ID do Telegram
                 </li>
                 <li>
                   <strong>Áudios descartados:</strong> Processados e excluídos
                   imediatamente após transcrição
                 </li>
                 <li>
-                  <strong>Dados no SEU Notion:</strong> Suas despesas ficam
-                  apenas no seu workspace
+                  <strong>Nenhum dado financeiro:</strong> Suas despesas ficam
+                  apenas no seu workspace Notion
                 </li>
               </ul>
             </section>
@@ -147,8 +146,12 @@
               <p class="mb-2">As informações são transmitidas apenas para:</p>
               <ul class="list-disc pl-6 space-y-2">
                 <li>
-                  <strong>Webhook n8n:</strong> Para processar a automação entre
-                  Telegram e Notion
+                  <strong>Nosso servidor (API própria):</strong> Responsável por
+                  todo o processamento, conectando o Telegram ao Notion
+                </li>
+                <li>
+                  <strong>Supabase:</strong> Para armazenar os dados de conexão
+                  (token do Notion, ID da database e ID do Telegram)
                 </li>
                 <li>
                   <strong>API do Notion:</strong> Para autenticação e gravação
@@ -233,7 +236,7 @@
               </p>
             </section>
             <p class="text-sm text-gray-500 pb-11">
-              <strong>Última atualização:</strong> Janeiro de 2026
+              <strong>Última atualização:</strong> Setembro de 2026
             </p>
           </div>
         </div>
